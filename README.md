@@ -1,43 +1,30 @@
-# Завдання 1
-Клас Student, який містить три властивості: name, age та grade. Замість того, щоб оголошувати ці властивості в тілі класу, потім у конструкторі, і нарешті надавати їм значення, напишіть скорочену ініціалізацію.
+ 
+
+##   Завдання 1 - Скорочена ініціалізація класу
+**Задача:** Використати parameter properties для скорочення оголошення властивостей класу.
+
+**Рішення:**
 ```ts
 class Student {
-  public name: string;
-  public age: number;
-  public grade: string;
-
-  constructor(name: string, age: number, grade: string) {
-    this.name = name;
-    this.age = age;
-    this.grade = grade;
-  }
+  constructor(
+    public name: string,
+    public age: number,
+    public grade: string
+  ) {}
 }
 ```
-# Завдання 2
-Ваше завдання полягатиме у створенні двох класів – Employee та Manager.
 
-Клас Employee повинен включати:
+##   Завдання 2 - Модифікатори доступу та наслідування
+**Задача:** Створити класи Employee та Manager з правильними модифікаторами доступу.
 
-властивість name, яка буде доступна всім.
-властивість department, яка буде доступна лише всередині класу Employee.
-salary, яке буде доступне лише всередині класу Employee та його підкласів.
-
-
-Клас Manager повинен бути підклас класу Employee
-
-Необхідно реалізувати в класі Manager конструктор, який викликатиме конструктор суперкласу та збільшуватиме salary на 10000.
+**Рішення:**
 ```ts
 class Employee {
-  // Заповніть модифікатори доступу
-  name: string;
-  department: string;
-  salary: number;
-
-  constructor(name: string, department: string, salary: number) {
-    this.name = name;
-    this.department = department;
-    this.salary = salary;
-  }
+  constructor(
+    public name: string,
+    private department: string,
+    protected salary: number
+  ) {}
 
   getEmployeeDetails() {
     return `Name: ${this.name}, Department: ${this.department}, Salary: ${this.salary}`;
@@ -45,15 +32,33 @@ class Employee {
 }
 
 class Manager extends Employee {
-  // Реалізуйте конструктор та збільшіть salary на 10000
+  constructor(
+    name: string,
+    department: string,
+    salary: number
+  ) {
+    super(name, department, salary);
+    this.salary += 10000;
+  }
 }
 ```
-# Завдання 3
-Ви створюєте гру, де є персонажі з різними ролями. Зараз ви працюєте над класом Wizard, який має реалізовувати два інтерфейси - ICharacter та ISpellCaster.
 
-Визначте інтерфейси ICharacter та ISpellCaster так, щоб вони відповідали вимогам класу Wizard. Інтерфейс ICharacter повинен включати властивості name і level, і навіть метод introduce і levelUp. Інтерфейс ISpellCaster повинен включати метод castSpell.
+##   Завдання 3 - Інтерфейси
+**Задача:** Створити інтерфейси ICharacter та ISpellCaster для класу Wizard.
+
+**Рішення:**
 ```ts
-// реалізація класу Wizard
+interface ICharacter {
+  name: string;
+  level: number;
+  introduce(phrase: string): void;
+  levelUp(): void;
+}
+
+interface ISpellCaster {
+  castSpell(): void;
+}
+
 class Wizard implements ICharacter, ISpellCaster {
   constructor(public name: string, public level: number) {
     if (this.level < 1) {
@@ -74,36 +79,69 @@ class Wizard implements ICharacter, ISpellCaster {
     console.log(`Level up! New level is ${this.level}`);
   }
 }
-
-// тестування класу
-const wizard = new Wizard('Merlin', 15);
-
-wizard.introduce('I am the mighty wizard');
-wizard.castSpell();
-wizard.levelUp();  // Level up! New level is 16
 ```
-# Завдання 4 *
-У цьому завдання вам належить реалізувати сценарій життя, де людина, ключ і будинок взаємодіють один з одним.
 
-Ключ (Key): Створіть клас Key. У нього має бути одна приватна властивість signature, яка генерується випадково при створенні об'єкта цього класу (наприклад Math.random()). Також цей клас повинен мати метод getSignature, який повертає значення властивості signature.
+##  Завдання 4 - Абстрактні класи та композиція
+**Задача:** Реалізувати систему взаємодії між Key, Person, House та MyHouse.
 
-Людина (Person): Створіть клас Person. Конструктор цього класу приймає об'єкт класу Key і зберігає їх у приватному властивості key. Клас Person повинен мати метод getKey, який повертає збережений ключ.
-
-Дім (House): Створіть абстрактний клас House. Цей клас має дві властивості: door, яка може бути відкрита (true), або закрита (false), і key, яка зберігає об'єкт класу Key. У цьому класі також повинен бути метод comeIn, який додає об'єкт класу Person у масив tenants, якщо door відкрита. Ваш абстрактний клас House також повинен мати абстрактний метод OpenDoor, який приймає об'єкт класу Key.
-
-Мій будинок (MyHouse): Створіть клас MyHouse, який успадковується від абстрактного класу House. Реалізуйте метод openDoor у цьому класі. Якщо ключ, переданий цьому методу, збігається з ключем, збереженим як key, то двері відчиняються.
-
-Після реалізації всіх класів створіть об'єкти для кожного класу та спробуйте відтворити сценарій, в якому людина приходить додому.
-
-Наприклад, ось так:
-
+**Рішення:**
 ```ts
-const key = new Key();
+class Key {
+  private signature: number;
 
+  constructor() {
+    this.signature = Math.random();
+  }
+
+  getSignature(): number {
+    return this.signature;
+  }
+}
+
+class Person {
+  constructor(private key: Key) {}
+
+  getKey(): Key {
+    return this.key;
+  }
+}
+
+abstract class House {
+  protected door: boolean = false;
+  protected tenants: Person[] = [];
+
+  constructor(protected key: Key) {}
+
+  abstract openDoor(key: Key): void;
+
+  comeIn(person: Person): void {
+    if (this.door) {
+      this.tenants.push(person);
+      console.log('Person came in successfully');
+    } else {
+      console.log('Door is closed, cannot come in');
+    }
+  }
+}
+
+class MyHouse extends House {
+  openDoor(key: Key): void {
+    if (key.getSignature() === this.key.getSignature()) {
+      this.door = true;
+      console.log('Door opened successfully');
+    } else {
+      console.log('Wrong key, door remains closed');
+    }
+  }
+}
+
+// Використання:
+const key = new Key();
 const house = new MyHouse(key);
 const person = new Person(key);
 
 house.openDoor(person.getKey());
-
 house.comeIn(person);
 ```
+
+ 
